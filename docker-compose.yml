@@ -1,15 +1,27 @@
-version: "3.8"
+  
+version: "3"
 services:
-  web:
-    build: .
-    ports:
-      - "5000:5000"
-    volumes:
-      - .:/code
-      - logvolume01:/var/log
-    links:
-      - redis
   redis:
     image: redis
-volumes:
-  logvolume01: {}
+    networks: 
+      - webnet
+  db:
+    image: postgres
+    networks: 
+      - webnet
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+  web:
+    image: slack-clone-server
+    ports:
+      - "8081:8081"
+    networks:
+      - webnet
+    environment:
+      DB_HOST: db
+      REDIS_HOST: redis
+    command: ["./wait-for-it.sh", "db:5432", "--", "node", "index.js"]
+networks:
+  webnet:
