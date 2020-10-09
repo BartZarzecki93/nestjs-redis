@@ -19,9 +19,6 @@ services:
       - postgres
     links:
       - postgres:postgres
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
     command: npm run dev
 
   postgres:
